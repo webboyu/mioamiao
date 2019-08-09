@@ -1,5 +1,5 @@
 <template>
-    <div class="search_body">
+    <div class="search_body" >
 				<div class="search_input">
 					<div class="search_input_wrapper">
 						<i class="iconfont icon-sousuo"></i>
@@ -8,6 +8,8 @@
 				</div>
 				<div class="search_result">
 					<h3>电影/电视剧/综艺</h3>
+					<Loading v-if="isLoading" />
+
 					<ul>
 						<!-- <li>
 							<div class="img"><img src="/images/movie_1.jpg"></div>
@@ -38,24 +40,32 @@ export default {
 	data(){
 		return {
 			message :　'',
-			list:[]
+			list:[],
+			isLoading: null
 		}
 	},
 	methods:{
 		 cancelRequest(){
             if(typeof this.source ==='function'){
-                this.source('终止请求')
+				this.source('终止请求')
+				
             }
         },
 	},
 	watch:{
 		message(newValue){
 			//防抖   禁止多次触发
+			
+			this.isLoading=true
+			if(newValue===""){
+				this.isLoading=false
+			}
 			var that=this
+			var cityId=this.$store.state.city.id
 			this.cancelRequest()
 
 			console.log(newValue)
-			this.axios.get('/api/searchList?cityId=10&kw='+newValue,{
+			this.axios.get("/api/searchList?cityId="+cityId+"&kw="+newValue,{
 				 cancelToken: new this.axios.CancelToken(function(c) {
                     that.source = c;
                 })
@@ -64,7 +74,10 @@ export default {
 				var msg=res.data.msg
 				var movies=res.data.data.movies
 				if(msg　&& movies){
-					return this.list=res.data.data.movies.list
+					 this.list=res.data.data.movies.list
+
+					 this.isLoading=false
+
 				}
 			}).catch((err) => {
                 if (this.axios.isCancel(err)) {
