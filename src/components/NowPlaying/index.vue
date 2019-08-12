@@ -19,11 +19,11 @@
         <li class="pullMessage">{{pullMessage}}</li>
 
         <li v-for="item in movieList" :key="item.id">
-          <div class="pic_show" @tap="handlToDetail">
+          <div class="pic_show" @tap="handlToDetail(item.id)">
             <img :src="item.img | setWH('128.180')" />
           </div>
           <div class="info_list">
-            <h2>
+            <h2 @tap="handlToDetail(item.id)">
               {{item.nm}}
               <img v-if="item.version" src="@/assets/maxs.png" />
             </h2>
@@ -53,9 +53,11 @@ export default {
       prevCityId : -1
     };
   },
+ 
   methods: {
-    handlToDetail() {
-      console.log("handleToDetail");
+    handlToDetail(movieId) {
+      // console.log(movieId);
+      this.$router.push('/movie/detail/1/'+movieId)
     },
     handleToScroll(pos) {
       if (pos.y > 30) {
@@ -77,6 +79,7 @@ export default {
       }
     }
   },
+
   activated() {
     //这个生命周期是有keep-alive时才触发的
 
